@@ -82,7 +82,7 @@ if use_example_data:
 #    modified_documents = st.text_area("데이터 수정 (크기 조정됨):", modified_documents, height=height)
     
     # 문서 리스트로 변환
-#    documents = modified_documents.split('\n')
+    documents = modified_documents.split('\n')
 else:
     st.write("직접 데이터를 입력하세요.")
     user_input = st.text_area("입력 문서 데이터 (한 줄에 하나의 문서)", "water pollution ecosystem")
