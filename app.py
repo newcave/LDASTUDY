@@ -1,6 +1,9 @@
 import streamlit as st
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
+from gensim.models.coherencemodel import CoherenceModel
+from gensim.corpora.dictionary import Dictionary
+import numpy as np
 
 # 스트림릿 페이지 설정
 st.title('LDA 교육용 자료 - 연구주제 Topic Modeling')
@@ -73,8 +76,8 @@ if st.button('LDA 수행'):
         # LDA 모델 생성
         lda = LatentDirichletAllocation(
             n_components=n_components,  # 주제 수
-            doc_topic_prior=doc_topic_prior,  # alpha
-            topic_word_prior=topic_word_prior,  # beta
+            doc_topic_prior=doc_topic_prior if doc_topic_prior != "Auto" else None,  # alpha
+            topic_word_prior=topic_word_prior if topic_word_prior != "Auto" else None,  # beta
             random_state=random_state  # random_state 값을 사용자가 지정
         )
 
@@ -87,6 +90,25 @@ if st.button('LDA 수행'):
         for idx, topic in enumerate(lda.components_):
             st.write(f"Topic {idx + 1}: ", [terms[i] for i in topic.argsort()[-top_n_words:]])
 
-    else:
-        st.write("문서 내용 입력")
+        # 퍼플렉서티 계산
+        perplexity = lda.perplexity(X)
+        st.write(f"Perplexity (낮을수록 좋음): {perplexity}")
 
+        # 코히어런스 계산 준비 (Gensim 사용)
+        tokenized_documents = [doc.split() for doc in documents]
+        dictionary = Dictionary(tokenized_documents)
+        corpus = [dictionary.doc2bow(text) for text in tokenized_documents]
+
+        # 토픽-단어 분포 변환 (scikit-learn의 LDA에서 Gensim으로)
+        lda_topics = lda.components_ / lda.components_.sum(axis=1)[:, np.newaxis]
+        coherence_model = CoherenceModel(
+            topics=[[terms[i] for i in topic.argsort()[-top_n_words:]] for topic in lda_topics],
+            texts=tokenized_documents,
+            dictionary=dictionary,
+            coherence='c_v'
+        )
+        coherence = coherence_model.get_coherence()
+        st.write(f"Coherence (높을수록 좋음): {coherence}")
+
+    else:
+        st.write("문서 내용을 입력하세요.")
