@@ -92,7 +92,7 @@ if st.button('LDA 수행'):
 
         # 퍼플렉서티 계산
         perplexity = lda.perplexity(X)
-        st.write(f"Perplexity (낮을수록 좋음): {perplexity}")
+        st.write(f"Perplexity (낮을수록 좋음): {perplexity:.4f}")
 
         # 코히어런스 계산 준비 (Gensim 사용)
         tokenized_documents = [doc.split() for doc in documents]
@@ -108,7 +108,7 @@ if st.button('LDA 수행'):
             coherence='c_v'
         )
         coherence = coherence_model.get_coherence()
-        st.write(f"Coherence (높을수록 좋음): {coherence}")
+        st.write(f"Coherence (높을수록 좋음): {coherence:.4f}")
 
     else:
         st.write("문서 내용을 입력하세요.")
