@@ -14,7 +14,7 @@ topic_word_prior = st.sidebar.selectbox('Beta (주제-단어 분포)', [0.01, 0.
 random_state = st.sidebar.number_input('Random State', min_value=0, value=42, step=1)
 
 # 예제 데이터를 사용할지 여부 선택
-use_example_data = st.sidebar.checkbox('예제 데이터 사용', value=True)
+use_example_data = st.sidebar.checkbox('Input Data Reset', value=True)
 
 # 예제 데이터
 example_documents = [
