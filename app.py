@@ -6,10 +6,11 @@ from sklearn.feature_extraction.text import CountVectorizer
 st.title('LDA 교육용 자료 - 연구주제 Topic Modeling')
 
 # 사이드바에서 입력값 받기
-st.sidebar.header('LDA 파라미터 설정')
+st.sidebar.header('LDA 설정')
 n_components = st.sidebar.slider('주제 수 (n_components)', min_value=2, max_value=10, value=4)
-doc_topic_prior = st.sidebar.selectbox('Alpha (문서-주제 분포)', [0.01, 0.05, 0.1, None])
-topic_word_prior = st.sidebar.selectbox('Beta (주제-단어 분포)', [0.01, 0.02, 0.03, None])
+doc_topic_prior = st.sidebar.selectbox('Alpha (문서-주제 분포)', [ 0.01, 0.05, 0.1, None])
+topic_word_prior = st.sidebar.selectbox('Beta (주제-단어 분포)', [ 0.01, 0.02, 0.02, None])
+random_state = st.sidebar.number_input('Random State', min_value=0, value=42, step=1)
 
 # 예제 데이터를 사용할지 여부 선택
 use_example_data = st.sidebar.checkbox('예제 데이터 사용', value=True)
@@ -32,7 +33,7 @@ example_documents = [
     'underground construction deep foundation pile drilling',
     'ground subsidence settlement monitoring slope stability',
 
-    # C 연구
+    #  C 연구 
     'groundwater contamination hydrogeology aquifer recharge',
     'groundwater quality monitoring well drilling subsurface flow',
     'hydraulic conductivity aquifer tests water table level monitoring',
@@ -40,7 +41,7 @@ example_documents = [
     'groundwater management policies sustainable water use',
     'aquifer storage recovery drought resilience water conservation',
 
-    # D 연구 
+    #  D 연구 
     'membrane filtration water treatment reverse osmosis microfiltration',
     'ultrafiltration membrane systems desalination process water reuse',
     'membrane bioreactor technology wastewater treatment filtration',
@@ -51,37 +52,39 @@ example_documents = [
 
 # 메인창에 데이터 입력 또는 예제 데이터 사용
 if use_example_data:
-    st.write("샘플 데이터 적용")
+    st.write("Example Data : ")
     # 예제 데이터를 표시하고 수정할 수 있는 텍스트 박스를 제공
-    modified_documents = st.text_area("예제 데이터 수정:", "\n".join(example_documents))
+    modified_documents = st.text_area("데이터 수정:", "\n".join(example_documents))
     documents = modified_documents.split('\n')  # 사용자가 수정한 데이터로 대체
 else:
-    st.write("직접 데이터를 입력")
+    st.write("직접 데이터를 입력하세요.")
     user_input = st.text_area("입력 문서 데이터 (한 줄에 하나의 문서)", "water pollution ecosystem")
     documents = user_input.split('\n')  # 입력 데이터를 라인별로 나눕니다.
 
-# 문서 데이터가 있는지 확인
-if len(documents) > 0 and documents[0] != '':
-    # 텍스트 데이터를 행렬로 변환
-    vectorizer = CountVectorizer()
-    X = vectorizer.fit_transform(documents)
+# LDA 수행 버튼
+if st.button('LDA 수행'):
+    # 문서 데이터가 있는지 확인
+    if len(documents) > 0 and documents[0] != '':
+        # 텍스트 데이터를 행렬로 변환
+        vectorizer = CountVectorizer()
+        X = vectorizer.fit_transform(documents)
 
-    # LDA 모델 생성
-    lda = LatentDirichletAllocation(
-        n_components=n_components,  # 주제 수
-        doc_topic_prior=doc_topic_prior,  # alpha
-        topic_word_prior=topic_word_prior,  # beta
-        random_state=100
-    )
+        # LDA 모델 생성
+        lda = LatentDirichletAllocation(
+            n_components=n_components,  # 주제 수
+            doc_topic_prior=doc_topic_prior,  # alpha
+            topic_word_prior=topic_word_prior,  # beta
+            random_state=random_state  # random_state 값을 사용자가 지정
+        )
 
-    # 모델 학습
-    lda.fit(X)
+        # 모델 학습
+        lda.fit(X)
 
-    # 주제별 상위 단어 출력
-    st.subheader('LDA 결과')
-    terms = vectorizer.get_feature_names_out()
-    for idx, topic in enumerate(lda.components_):
-        st.write(f"Topic {idx + 1}: ", [terms[i] for i in topic.argsort()[-4:]])
+        # 주제별 상위 단어 출력
+        st.subheader('LDA 결과')
+        terms = vectorizer.get_feature_names_out()
+        for idx, topic in enumerate(lda.components_):
+            st.write(f"Topic {idx + 1}: ", [terms[i] for i in topic.argsort()[-4:]])
 
-else:
-    st.write("문서 내용을 입력하세요.")
+    else:
+        st.write("문서 내용 입력")
