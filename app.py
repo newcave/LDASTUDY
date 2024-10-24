@@ -6,7 +6,7 @@ from gensim.corpora.dictionary import Dictionary
 import numpy as np
 
 # 스트림릿 페이지 설정
-st.title('LDA 교육용 자료 - 연구주제dd Topic Modeling')
+st.title('LDA 교육용 자료 - 연구주제 Topic Modeling')
 
 # 사이드바에서 A와 B 모델 설정
 st.sidebar.header('LDA 설정 (모델 A)')
