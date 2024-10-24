@@ -33,13 +33,40 @@ stop_words = stop_words_input.split(',')
 use_example_data = st.sidebar.checkbox('Input Data Reset', value=True)
 
 # 예제 데이터
+# 예제 데이터
 example_documents = [
+    # A 연구 
     'water quality pollution monitoring river lake ecosystem',
     'wastewater treatment plant management contamination reduction',
-    'earthquake resistant buildings structural analysis seismic waves',
-    'groundwater contamination hydrogeology aquifer recharge',
-]
+    'water pollution control strategies wetland restoration fish habitat',
+    'drinking water purification desalination flood control',
+    'water sampling analysis sediment nutrients pollution levels',
+    'ecological restoration water health aquatic life river habitat',
 
+    # B 연구 
+    'earthquake resistant buildings structural analysis seismic waves',
+    'soil stabilization foundation engineering landslide prevention',
+    'geotechnical engineering rock mechanics tunnel excavation support',
+    'structural integrity bridges skyscrapers earthquake design',
+    'underground construction deep foundation pile drilling',
+    'ground subsidence settlement monitoring slope stability',
+
+    #  C 연구 
+    'groundwater contamination hydrogeology aquifer recharge',
+    'groundwater quality monitoring well drilling subsurface flow',
+    'hydraulic conductivity aquifer tests water table level monitoring',
+    'groundwater pollution nitrate contamination agriculture runoff',
+    'groundwater management policies sustainable water use',
+    'aquifer storage recovery drought resilience water conservation',
+
+    #  D 연구 
+    'membrane filtration water treatment reverse osmosis microfiltration',
+    'ultrafiltration membrane systems desalination process water reuse',
+    'membrane bioreactor technology wastewater treatment filtration',
+    'reverse osmosis desalination brackish water treatment permeate flux',
+    'nanofiltration technologies industrial water treatment fouling control',
+    'membrane performance optimization water purification energy efficiency',
+]
 # 메인창에 데이터 입력 또는 예제 데이터 사용
 if use_example_data:
     st.write("Example Data : ")
