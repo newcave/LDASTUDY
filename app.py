@@ -8,13 +8,20 @@ import numpy as np
 # 스트림릿 페이지 설정
 st.title('LDA 교육용 자료 - 연구주제 Topic Modeling')
 
-# 사이드바에서 입력값 받기
-st.sidebar.header('LDA 설정')
-n_components = st.sidebar.slider('주제 수 (n_components)', min_value=2, max_value=10, value=4)
-top_n_words = st.sidebar.slider('상위 단어 수 (Top N Words)', min_value=2, max_value=10, value=3)  # 주제별 상위 단어 수 설정
-doc_topic_prior = st.sidebar.selectbox('Alpha (문서-주제 분포)', [0.01, 0.05, 0.1, "Auto"])
-topic_word_prior = st.sidebar.selectbox('Beta (주제-단어 분포)', [0.01, 0.02, 0.05, "Auto"])
-random_state = st.sidebar.number_input('Random State', min_value=0, value=42, step=1)
+# 사이드바에서 A와 B 모델 설정
+st.sidebar.header('LDA 설정 (모델 A)')
+n_components_a = st.sidebar.slider('A 모델 - 주제 수 (n_components)', min_value=2, max_value=10, value=4)
+top_n_words_a = st.sidebar.slider('A 모델 - 상위 단어 수 (Top N Words)', min_value=2, max_value=10, value=3)
+doc_topic_prior_a = st.sidebar.selectbox('A 모델 - Alpha (문서-주제 분포)', [0.01, 0.05, 0.1, "Auto"])
+topic_word_prior_a = st.sidebar.selectbox('A 모델 - Beta (주제-단어 분포)', [0.01, 0.02, 0.05, "Auto"])
+random_state_a = st.sidebar.number_input('A 모델 - Random State', min_value=0, value=42, step=1)
+
+st.sidebar.header('LDA 설정 (모델 B)')
+n_components_b = st.sidebar.slider('B 모델 - 주제 수 (n_components)', min_value=2, max_value=10, value=4)
+top_n_words_b = st.sidebar.slider('B 모델 - 상위 단어 수 (Top N Words)', min_value=2, max_value=10, value=3)
+doc_topic_prior_b = st.sidebar.selectbox('B 모델 - Alpha (문서-주제 분포)', [0.01, 0.05, 0.1, "Auto"])
+topic_word_prior_b = st.sidebar.selectbox('B 모델 - Beta (주제-단어 분포)', [0.01, 0.02, 0.05, "Auto"])
+random_state_b = st.sidebar.number_input('B 모델 - Random State', min_value=0, value=42, step=1)
 
 # 예제 데이터를 사용할지 여부 선택
 use_example_data = st.sidebar.checkbox('Input Data Reset', value=True)
@@ -57,7 +64,6 @@ example_documents = [
 # 메인창에 데이터 입력 또는 예제 데이터 사용
 if use_example_data:
     st.write("Example Data : ")
-    # 예제 데이터를 표시하고 수정할 수 있는 텍스트 박스를 제공
     modified_documents = st.text_area("데이터 수정:", "\n".join(example_documents))
     documents = modified_documents.split('\n')  # 사용자가 수정한 데이터로 대체
 else:
@@ -65,50 +71,75 @@ else:
     user_input = st.text_area("입력 문서 데이터 (한 줄에 하나의 문서)", "water pollution ecosystem")
     documents = user_input.split('\n')  # 입력 데이터를 라인별로 나눕니다.
 
+# LDA 수행 함수 정의
+def perform_lda(documents, n_components, doc_topic_prior, topic_word_prior, random_state, top_n_words):
+    # 텍스트 데이터를 행렬로 변환
+    vectorizer = CountVectorizer()
+    X = vectorizer.fit_transform(documents)
+
+    # LDA 모델 생성
+    lda = LatentDirichletAllocation(
+        n_components=n_components,
+        doc_topic_prior=doc_topic_prior if doc_topic_prior != "Auto" else None,
+        topic_word_prior=topic_word_prior if topic_word_prior != "Auto" else None,
+        random_state=random_state
+    )
+
+    # 모델 학습
+    lda.fit(X)
+
+    # 주제별 상위 단어 출력
+    terms = vectorizer.get_feature_names_out()
+    topics = [[terms[i] for i in topic.argsort()[-top_n_words:]] for topic in lda.components_]
+
+    # 퍼플렉서티 계산
+    perplexity = lda.perplexity(X)
+
+    # 코히어런스 계산
+    tokenized_documents = [doc.split() for doc in documents]
+    dictionary = Dictionary(tokenized_documents)
+    corpus = [dictionary.doc2bow(text) for text in tokenized_documents]
+
+    lda_topics = lda.components_ / lda.components_.sum(axis=1)[:, np.newaxis]
+    coherence_model = CoherenceModel(
+        topics=topics,
+        texts=tokenized_documents,
+        dictionary=dictionary,
+        coherence='c_v'
+    )
+    coherence = coherence_model.get_coherence()
+
+    return topics, perplexity, coherence
+
 # LDA 수행 버튼
 if st.button('LDA 수행'):
-    # 문서 데이터가 있는지 확인
     if len(documents) > 0 and documents[0] != '':
-        # 텍스트 데이터를 행렬로 변환
-        vectorizer = CountVectorizer()
-        X = vectorizer.fit_transform(documents)
-
-        # LDA 모델 생성
-        lda = LatentDirichletAllocation(
-            n_components=n_components,  # 주제 수
-            doc_topic_prior=doc_topic_prior if doc_topic_prior != "Auto" else None,  # alpha
-            topic_word_prior=topic_word_prior if topic_word_prior != "Auto" else None,  # beta
-            random_state=random_state  # random_state 값을 사용자가 지정
+        # 모델 A 수행
+        topics_a, perplexity_a, coherence_a = perform_lda(
+            documents, n_components_a, doc_topic_prior_a, topic_word_prior_a, random_state_a, top_n_words_a
         )
 
-        # 모델 학습
-        lda.fit(X)
-
-        # 주제별 상위 단어 출력
-        st.subheader('LDA 결과')
-        terms = vectorizer.get_feature_names_out()
-        for idx, topic in enumerate(lda.components_):
-            st.write(f"Topic {idx + 1}: ", [terms[i] for i in topic.argsort()[-top_n_words:]])
-
-        # 퍼플렉서티 계산
-        perplexity = lda.perplexity(X)
-        st.write(f"Perplexity (낮을수록 좋음): {perplexity:.4f}")
-
-        # 코히어런스 계산 준비 (Gensim 사용)
-        tokenized_documents = [doc.split() for doc in documents]
-        dictionary = Dictionary(tokenized_documents)
-        corpus = [dictionary.doc2bow(text) for text in tokenized_documents]
-
-        # 토픽-단어 분포 변환 (scikit-learn의 LDA에서 Gensim으로)
-        lda_topics = lda.components_ / lda.components_.sum(axis=1)[:, np.newaxis]
-        coherence_model = CoherenceModel(
-            topics=[[terms[i] for i in topic.argsort()[-top_n_words:]] for topic in lda_topics],
-            texts=tokenized_documents,
-            dictionary=dictionary,
-            coherence='c_v'
+        # 모델 B 수행
+        topics_b, perplexity_b, coherence_b = perform_lda(
+            documents, n_components_b, doc_topic_prior_b, topic_word_prior_b, random_state_b, top_n_words_b
         )
-        coherence = coherence_model.get_coherence()
-        st.write(f"Coherence (높을수록 좋음): {coherence:.4f}")
+
+        # 결과 표시
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.subheader("모델 A 결과")
+            for idx, topic in enumerate(topics_a):
+                st.write(f"Topic {idx + 1}: {topic}")
+            st.write(f"Perplexity (낮을수록 좋음): {perplexity_a:.4f}")
+            st.write(f"Coherence (높을수록 좋음): {coherence_a:.4f}")
+
+        with col2:
+            st.subheader("모델 B 결과")
+            for idx, topic in enumerate(topics_b):
+                st.write(f"Topic {idx + 1}: {topic}")
+            st.write(f"Perplexity (낮을수록 좋음): {perplexity_b:.4f}")
+            st.write(f"Coherence (높을수록 좋음): {coherence_b:.4f}")
 
     else:
         st.write("문서 내용을 입력하세요.")
