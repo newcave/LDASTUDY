@@ -1,6 +1,10 @@
 import streamlit as st
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
+import pyLDAvis
+import pyLDAvis.sklearn
+import matplotlib.pyplot as plt
+import streamlit.components.v1 as components
 
 # 스트림릿 페이지 설정
 st.title('LDA 교육용 자료 - 연구주제 Topic Modeling')
@@ -14,7 +18,7 @@ topic_word_prior = st.sidebar.selectbox('Beta (주제-단어 분포)', [0.01, 0.
 random_state = st.sidebar.number_input('Random State', min_value=0, value=42, step=1)
 
 # 예제 데이터를 사용할지 여부 선택
-use_example_data = st.sidebar.checkbox('Input Data Reset', value=True)
+use_example_data = st.sidebar.checkbox('예제 데이터 사용', value=True)
 
 # 예제 데이터
 example_documents = [
@@ -87,5 +91,14 @@ if st.button('LDA 수행'):
         for idx, topic in enumerate(lda.components_):
             st.write(f"Topic {idx + 1}: ", [terms[i] for i in topic.argsort()[-top_n_words:]])
 
+        # LDA 시각화 (pyLDAvis)
+        st.subheader('LDA 시각화')
+        lda_vis = pyLDAvis.sklearn.prepare(lda, X, vectorizer, mds='tsne')
+        pyLDAvis.save_html(lda_vis, 'lda.html')
+        
+        # HTML 파일을 읽어서 Streamlit에서 표시
+        with open('lda.html', 'r') as f:
+            lda_html = f.read()
+        components.html(lda_html, height=800)
     else:
         st.write("문서 내용 입력")
