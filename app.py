@@ -23,42 +23,21 @@ doc_topic_prior_b = st.sidebar.selectbox('B 모델 - Alpha (문서-주제 분포
 topic_word_prior_b = st.sidebar.selectbox('B 모델 - Beta (주제-단어 분포)', [0.01, 0.02, 0.05, "Auto"])
 random_state_b = st.sidebar.number_input('B 모델 - Random State', min_value=0, value=42, step=1)
 
+# 불용어 입력: 기본값으로 'water', 'flow' 추가
+st.sidebar.header('stop word 설정')
+default_stopwords = "water, flow, analysis"
+stop_words_input = st.sidebar.text_area('추가 입력(콤마로 구분)', default_stopwords)
+stop_words = stop_words_input.split(',')
+
 # 예제 데이터를 사용할지 여부 선택
 use_example_data = st.sidebar.checkbox('Input Data Reset', value=True)
 
 # 예제 데이터
 example_documents = [
-    # A 연구 
     'water quality pollution monitoring river lake ecosystem',
     'wastewater treatment plant management contamination reduction',
-    'water pollution control strategies wetland restoration fish habitat',
-    'drinking water purification desalination flood control',
-    'water sampling analysis sediment nutrients pollution levels',
-    'ecological restoration water health aquatic life river habitat',
-
-    # B 연구 
     'earthquake resistant buildings structural analysis seismic waves',
-    'soil stabilization foundation engineering landslide prevention',
-    'geotechnical engineering rock mechanics tunnel excavation support',
-    'structural integrity bridges skyscrapers earthquake design',
-    'underground construction deep foundation pile drilling',
-    'ground subsidence settlement monitoring slope stability',
-
-    #  C 연구 
     'groundwater contamination hydrogeology aquifer recharge',
-    'groundwater quality monitoring well drilling subsurface flow',
-    'hydraulic conductivity aquifer tests water table level monitoring',
-    'groundwater pollution nitrate contamination agriculture runoff',
-    'groundwater management policies sustainable water use',
-    'aquifer storage recovery drought resilience water conservation',
-
-    #  D 연구 
-    'membrane filtration water treatment reverse osmosis microfiltration',
-    'ultrafiltration membrane systems desalination process water reuse',
-    'membrane bioreactor technology wastewater treatment filtration',
-    'reverse osmosis desalination brackish water treatment permeate flux',
-    'nanofiltration technologies industrial water treatment fouling control',
-    'membrane performance optimization water purification energy efficiency',
 ]
 
 # 메인창에 데이터 입력 또는 예제 데이터 사용
@@ -72,9 +51,9 @@ else:
     documents = user_input.split('\n')  # 입력 데이터를 라인별로 나눕니다.
 
 # LDA 수행 함수 정의
-def perform_lda(documents, n_components, doc_topic_prior, topic_word_prior, random_state, top_n_words):
-    # 텍스트 데이터를 행렬로 변환
-    vectorizer = CountVectorizer()
+def perform_lda(documents, n_components, doc_topic_prior, topic_word_prior, random_state, top_n_words, stop_words):
+    # 텍스트 데이터를 행렬로 변환 (불용어 포함)
+    vectorizer = CountVectorizer(stop_words=stop_words)
     X = vectorizer.fit_transform(documents)
 
     # LDA 모델 생성
@@ -116,12 +95,12 @@ if st.button('LDA 수행'):
     if len(documents) > 0 and documents[0] != '':
         # 모델 A 수행
         topics_a, perplexity_a, coherence_a = perform_lda(
-            documents, n_components_a, doc_topic_prior_a, topic_word_prior_a, random_state_a, top_n_words_a
+            documents, n_components_a, doc_topic_prior_a, topic_word_prior_a, random_state_a, top_n_words_a, stop_words
         )
 
         # 모델 B 수행
         topics_b, perplexity_b, coherence_b = perform_lda(
-            documents, n_components_b, doc_topic_prior_b, topic_word_prior_b, random_state_b, top_n_words_b
+            documents, n_components_b, doc_topic_prior_b, topic_word_prior_b, random_state_b, top_n_words_b, stop_words
         )
 
         # 결과 표시
