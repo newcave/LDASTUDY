@@ -75,14 +75,14 @@ if use_example_data:
     modified_documents = st.text_area("데이터 수정:", "\n".join(example_documents))
     
     # 입력된 텍스트의 줄 수를 계산하여 높이 설정
-    num_lines = len(modified_documents.split('\n'))
-    height = min(600, max(100, num_lines * 20))  # 최소 100, 최대 600으로 제한
+#    num_lines = len(modified_documents.split('\n'))
+#    height = min(600, max(100, num_lines * 20))  # 최소 100, 최대 600으로 제한
     
     # 입력된 텍스트에 맞춰 다시 텍스트 에리어 크기 설정
-    modified_documents = st.text_area("데이터 수정 (크기 조정됨):", modified_documents, height=height)
+#    modified_documents = st.text_area("데이터 수정 (크기 조정됨):", modified_documents, height=height)
     
     # 문서 리스트로 변환
-    documents = modified_documents.split('\n')
+#    documents = modified_documents.split('\n')
 else:
     st.write("직접 데이터를 입력하세요.")
     user_input = st.text_area("입력 문서 데이터 (한 줄에 하나의 문서)", "water pollution ecosystem")
