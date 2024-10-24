@@ -70,7 +70,7 @@ example_documents = [
 # 메인창에 데이터 입력 또는 예제 데이터 사용
 if use_example_data:
     st.write("Example Data : ")
-    modified_documents = st.text_area("데이터 수정:", "\n".join(example_documents), height=200) 
+    modified_documents = st.text_area("입력 데이터 수정:", "\n".join(example_documents), height=200) 
     documents = modified_documents.split('\n')  # 사용자가 수정한 데이터로 대체
     
     # 입력된 텍스트의 줄 수를 계산하여 높이 설정
