@@ -24,10 +24,15 @@ topic_word_prior_b = st.sidebar.selectbox('B 모델 - Beta (주제-단어 분포
 random_state_b = st.sidebar.number_input('B 모델 - Random State', min_value=0, value=42, step=1)
 
 # 불용어 입력: 기본값으로 'water', 'flow' 추가
+
 st.sidebar.header('stop word 설정')
 default_stopwords = "water, flow, analysis"
 stop_words_input = st.sidebar.text_area('추가 입력(콤마로 구분)', default_stopwords)
-stop_words = stop_words_input.split(',')
+
+# Trim any leading/trailing spaces from stop words
+stop_words = [word.strip() for word in stop_words_input.split(',')]
+
+
 
 # 예제 데이터를 사용할지 여부 선택
 use_example_data = st.sidebar.checkbox('Input Data Reset', value=True)
