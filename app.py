@@ -6,6 +6,7 @@ from gensim.corpora.dictionary import Dictionary
 import numpy as np
 from datetime import datetime
 import pytz
+import matplotlib.pyplot as plt
 
 # 스트림릿 페이지 설정
 st.title('LDA 기반 : 연구 주제 Topic Modeling')
@@ -176,3 +177,31 @@ if st.session_state.results:
         st.write(f"[Hyper-params : alpha = {alpha}, beta = {beta}, RS = {rs}]")
                  
         st.markdown("</div>", unsafe_allow_html=True)  # Close the div tag
+
+# 그래프 버튼 추가
+if st.button('결과그래프'):
+    if len(st.session_state.results) > 0:
+        # 데이터 준비
+        models = list(range(1, len(st.session_state.results) + 1))  # 모델 번호 (1, 2, 3, ...)
+        perplexities = [result['perplexity'] for result in st.session_state.results]
+        coherences = [result['coherence'] for result in st.session_state.results]
+
+        # 그래프 생성
+        fig, ax1 = plt.subplots()
+
+        color = 'tab:red'
+        ax1.set_xlabel('Model Number')
+        ax1.set_ylabel('Perplexity', color=color)
+        ax1.plot(models, perplexities, color=color, label='Perplexity')
+        ax1.tick_params(axis='y', labelcolor=color)
+
+        ax2 = ax1.twinx()  # Y축 공유
+        color = 'tab:blue'
+        ax2.set_ylabel('Coherence', color=color)
+        ax2.plot(models, coherences, color=color, label='Coherence')
+        ax2.tick_params(axis='y', labelcolor=color)
+
+        fig.tight_layout()  # 레이아웃 조정
+        st.pyplot(fig)
+    else:
+        st.warning("먼저 LDA 분석을 수행하세요.")
