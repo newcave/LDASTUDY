@@ -189,7 +189,7 @@ if st.button('결과그래프'):
         fig, ax1 = plt.subplots()
 
         color = 'tab:red'
-        ax1.set_xlabel('Model Number')
+        ax1.set_xlabel('Model Number #')
         ax1.set_ylabel('Perplexity', color=color)
         ax1.plot(models, perplexities, color=color, label='Perplexity')
         ax1.tick_params(axis='y', labelcolor=color)
