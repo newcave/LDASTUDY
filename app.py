@@ -143,7 +143,8 @@ if st.button('LDA 수행'):
 if st.session_state.results:
     st.header("Topic Modeling Results ({result['timestamp']})")
     for idx, result in enumerate(st.session_state.results):
-        st.subheader(f"모델 {result['model']} 결과 #{idx + 1}")
+#        st.subheader(f"모델 {result['model']} 결과 #{idx + 1}")
+        st.subheader(f"모델 {result['model']} 결과 #{idx + 1} ({result['timestamp']})")
         for topic_idx, topic in enumerate(result['topics']):
             st.write(f"Topic {topic_idx + 1}: {topic}")
         st.write(f"Perplexity (낮을수록 좋음): {result['perplexity']:.4f}")
