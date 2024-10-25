@@ -178,7 +178,6 @@ if st.session_state.results:
                  
         st.markdown("</div>", unsafe_allow_html=True)  # Close the div tag
 
-# 그래프 버튼 추가
 if st.button('결과그래프'):
     if len(st.session_state.results) > 0:
         # 데이터 준비
@@ -186,6 +185,7 @@ if st.button('결과그래프'):
         perplexities = [result['perplexity'] for result in st.session_state.results]
         coherences = [result['coherence'] for result in st.session_state.results]
 
+        # 그래프 생성
         fig, ax1 = plt.subplots()
 
         color = 'tab:red'
