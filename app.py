@@ -4,6 +4,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 from gensim.models.coherencemodel import CoherenceModel
 from gensim.corpora.dictionary import Dictionary
 import numpy as np
+from datetime import datetime
+import pytz
 
 # 스트림릿 페이지 설정
 st.title('LDA 기반 : 연구 주제 Topic Modeling')
@@ -116,27 +118,32 @@ if st.button('LDA 수행'):
             documents, n_components_b, doc_topic_prior_b, topic_word_prior_b, random_state_b, top_n_words_b, stop_words
         )
 
-        # 모델 결과를 기록에 추가
+        # 모델 결과를 기록에 추가 (타임스탬프 추가)
+        kst = pytz.timezone('Asia/Seoul')
+        timestamp = datetime.now(kst).strftime('%Y-%m-%d %H:%M:%S, KST')
+
         st.session_state.results.append({
             "model": "A",
             "topics": topics_a,
             "perplexity": perplexity_a,
-            "coherence": coherence_a
+            "coherence": coherence_a,
+            "timestamp": timestamp
         })
         st.session_state.results.append({
             "model": "B",
             "topics": topics_b,
             "perplexity": perplexity_b,
-            "coherence": coherence_b
+            "coherence": coherence_b,
+            "timestamp": timestamp
         })
 
-        st.success("LDA 모델링 완료. 결과가 저장되었습니다.")
+        st.success(f"LDA 분석 완료. 수행 결과는 하단에 누적 표시됨 ({timestamp})")
 
 # 결과 누적 표시
 if st.session_state.results:
     st.header("모든 모델 결과")
     for idx, result in enumerate(st.session_state.results):
-        st.subheader(f"모델 {result['model']} 결과 #{idx + 1}")
+        st.subheader(f"모델 {result['model']} 결과 #{idx + 1} ({result['timestamp']})")
         for topic_idx, topic in enumerate(result['topics']):
             st.write(f"Topic {topic_idx + 1}: {topic}")
         st.write(f"Perplexity (낮을수록 좋음): {result['perplexity']:.4f}")
