@@ -26,7 +26,7 @@ random_state_b = st.sidebar.number_input('B 모델 - Random State', min_value=0,
 # 불용어 입력: 기본값으로 'water', 'flow' 추가
 
 st.sidebar.header('stop word 설정')
-default_stopwords = "water, flow, analysis"
+default_stopwords = "water, flow, analysis, engineering, system, systems"
 stop_words_input = st.sidebar.text_area('추가 입력(콤마로 구분)', default_stopwords)
 
 # Trim any leading/trailing spaces from stop words
