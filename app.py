@@ -137,11 +137,11 @@ if st.button('LDA 수행'):
             "timestamp": timestamp
         })
 
-        st.success(f"LDA 분석 완료. 수행 결과는 하단에 누적 표시됨")
+        st.success(f"LDA 분석 완료. 수행 결과는 하단에 누적 표시됨 ({timestamp})")
 
 # 결과 누적 표시
 if st.session_state.results:
-    st.header("Topic Model Results ({timestamp})")
+    st.header("모든 모델 결과")
     for idx, result in enumerate(st.session_state.results):
         # Handle the case where 'timestamp' might not exist for older results
         timestamp = result.get('timestamp', 'Timestamp not available')
