@@ -162,7 +162,7 @@ if st.session_state.results:
         for topic_idx, topic in enumerate(result['topics']):
             st.write(f"Topic {topic_idx + 1}: {topic}")
         st.write(f"Perplexity (낮을수록 좋음): {result['perplexity']:.4f}")
-        st.write(f"Coherence (높을수록 좋음): {result['coherence']:.4f}"
+        st.write(f"Coherence (높을수록 좋음): {result['coherence']:.4f}")
 
          if result['model'] == 'A':
             alpha = doc_topic_prior_a
