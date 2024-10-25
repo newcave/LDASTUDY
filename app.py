@@ -186,7 +186,6 @@ if st.button('결과그래프'):
         perplexities = [result['perplexity'] for result in st.session_state.results]
         coherences = [result['coherence'] for result in st.session_state.results]
 
-        # 그래프 생성
         fig, ax1 = plt.subplots()
 
         color = 'tab:red'
@@ -194,6 +193,7 @@ if st.button('결과그래프'):
         ax1.set_ylabel('Perplexity', color=color)
         ax1.plot(models, perplexities, color=color, label='Perplexity')
         ax1.tick_params(axis='y', labelcolor=color)
+        ax1.set_xticks(models)  # 모델 번호만 표시 (정수 값)
 
         ax2 = ax1.twinx()  # Y축 공유
         color = 'tab:blue'
