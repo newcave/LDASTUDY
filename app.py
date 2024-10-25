@@ -141,7 +141,7 @@ if st.button('LDA 수행'):
 
 # 결과 누적 표시
 if st.session_state.results:
-    st.header("Topic Modeling Results")
+    st.header("Topic Modeling Results ({result['timestamp']})"))
     for idx, result in enumerate(st.session_state.results):
         st.subheader(f"모델 {result['model']} 결과 #{idx + 1}")
         for topic_idx, topic in enumerate(result['topics']):
