@@ -148,7 +148,8 @@ if st.session_state.results:
 
         # Show timestamp in smaller font
 #        st.markdown(f"<bold>결과 #{idx + 1} : 모델 {result['model']}  ({timestamp}</bold>)", unsafe_allow_html=True)
-        st.markdown(f"<strong>결과 #{idx + 1} : 모델 {result['model']}  ({timestamp})</strong>", unsafe_allow_html=True)
+        st.markdown(f"<strong style='color:blue;'>결과 #{idx + 1} : 모델 {result['model']}  ({timestamp})</strong>", unsafe_allow_html=True)
+
         
         # Display topics, perplexity, and coherence in larger font
         if idx == len(st.session_state.results) - 1:
