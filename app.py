@@ -137,11 +137,11 @@ if st.button('LDA 수행'):
             "timestamp": timestamp
         })
 
-        st.success(f"LDA 분석 완료. 수행 결과는 하단에 누적 표시됨 ({timestamp})")
+        st.success(f"LDA 분석 완료. 수행 결과는 아래로 누적 표시됨 ({timestamp})")
 
 # 결과 누적 표시
 if st.session_state.results:
-    st.header("모든 모델 결과")
+    st.header("Topic Modeling Results ({timestamp})")
     for idx, result in enumerate(st.session_state.results):
         # Handle the case where 'timestamp' might not exist for older results
         timestamp = result.get('timestamp', 'Timestamp not available')
@@ -152,7 +152,7 @@ if st.session_state.results:
         # Display topics, perplexity, and coherence in larger font
         if idx == len(st.session_state.results) - 1:
             # Last result in bold and larger font
-            st.markdown("<div style='font-size:20px; font-weight:bold;'>", unsafe_allow_html=True)
+            st.markdown("<div style='font-size:25px; font-weight:bold;'>", unsafe_allow_html=True)
         else:
             # Other results in regular larger font
             st.markdown("<div style='font-size:18px'>", unsafe_allow_html=True)
