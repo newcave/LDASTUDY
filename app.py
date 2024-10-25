@@ -164,14 +164,14 @@ if st.session_state.results:
         st.write(f"Perplexity (낮을수록 좋음): {result['perplexity']:.4f}")
         st.write(f"Coherence (높을수록 좋음): {result['coherence']:.4f}")
 
-         if result['model'] == 'A':
+        if result['model'] == 'A':
             alpha = doc_topic_prior_a
             beta = topic_word_prior_a
             rs = random_state_a
-            else:
-                alpha = doc_topic_prior_b
-                beta = topic_word_prior_b
-                rs = random_state_b
+        else:
+            alpha = doc_topic_prior_b
+            beta = topic_word_prior_b
+            rs = random_state_b
         
         st.write(f"[Hyper-params : alpha = {alpha}, beta = {beta}, RS = {rs}]")
                  
