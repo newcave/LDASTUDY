@@ -139,13 +139,21 @@ if st.button('LDA 수행'):
 
         st.success(f"LDA 분석 완료. 수행 결과는 하단에 누적 표시됨 ({timestamp})")
 
-# 결과 누적 표시
 if st.session_state.results:
-    st.header("Topic Modeling Results ({result['timestamp']})")
+    st.header("모든 모델 결과")
     for idx, result in enumerate(st.session_state.results):
-#        st.subheader(f"모델 {result['model']} 결과 #{idx + 1}")
-        st.subheader(f"모델 {result['model']} 결과 #{idx + 1} ({result['timestamp']})")
+        # Handle the case where 'timestamp' might not exist for older results
+        timestamp = result.get('timestamp', 'Timestamp not available')
+
+        # Show timestamp in smaller font
+        st.markdown(f"<small>모델 {result['model']} 결과 #{idx + 1} ({timestamp})</small>", unsafe_allow_html=True)
+        
+        # Display topics, perplexity, and coherence in larger font
+        st.markdown("<div style='font-size:18px'>", unsafe_allow_html=True)  # Increase font size for the results
         for topic_idx, topic in enumerate(result['topics']):
             st.write(f"Topic {topic_idx + 1}: {topic}")
         st.write(f"Perplexity (낮을수록 좋음): {result['perplexity']:.4f}")
         st.write(f"Coherence (높을수록 좋음): {result['coherence']:.4f}")
+        st.markdown("</div>", unsafe_allow_html=True)  # Close the div tag
+
+
